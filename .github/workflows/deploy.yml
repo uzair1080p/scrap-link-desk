@@ -22,17 +22,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: Install dependencies
-        run: bun install
+        run: npm install
 
       - name: Build project
-        run: bun run build
+        run: npm run build
+
+      - name: Check build output
+        run: |
+          ls -la
+          ls -la dist
 
       - name: Copy index.html to 404.html for SPA routing
-        run: cp ./dist/index.html ./dist/404.html
+        run: cp dist/index.html dist/404.html
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
@@ -40,7 +47,7 @@ jobs:
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "./dist"
+          path: dist
 
   deploy:
     environment:
