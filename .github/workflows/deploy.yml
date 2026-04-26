@@ -33,13 +33,29 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Check build output
+      - name: Find build output
         run: |
           ls -la
-          ls -la dist
+          find . -name "index.html"
 
-      - name: Copy index.html to 404.html for SPA routing
-        run: cp dist/index.html dist/404.html
+      - name: Prepare GitHub Pages folder
+        run: |
+          if [ -f dist/client/index.html ]; then
+            cp dist/client/index.html dist/client/404.html
+            echo "PUBLISH_DIR=dist/client" >> $GITHUB_ENV
+          elif [ -f dist/index.html ]; then
+            cp dist/index.html dist/404.html
+            echo "PUBLISH_DIR=dist" >> $GITHUB_ENV
+          elif [ -f build/client/index.html ]; then
+            cp build/client/index.html build/client/404.html
+            echo "PUBLISH_DIR=build/client" >> $GITHUB_ENV
+          elif [ -f build/index.html ]; then
+            cp build/index.html build/404.html
+            echo "PUBLISH_DIR=build" >> $GITHUB_ENV
+          else
+            echo "No index.html found"
+            exit 1
+          fi
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
@@ -47,7 +63,7 @@ jobs:
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: ${{ env.PUBLISH_DIR }}
 
   deploy:
     environment:
