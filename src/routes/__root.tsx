@@ -1,6 +1,4 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
-
-import appCss from "../styles.css?url";
+import { Outlet, Link, createRootRoute, HeadContent } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 
@@ -51,35 +49,22 @@ export const Route = createRootRoute({
       },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
   }),
-  shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
 });
 
-function RootShell({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" className="dark">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
-}
-
 function RootComponent() {
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <Header />
-      <main className="flex-1">
-        <Outlet />
-      </main>
-      <Footer />
-    </div>
+    <>
+      <HeadContent />
+      <div className="flex min-h-screen flex-col bg-background">
+        <Header />
+        <main className="flex-1">
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 }
